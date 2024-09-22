@@ -14,85 +14,59 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="txtDatabasePath">
+   <widget class="QLabel" name="label_logo">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>130</y>
-      <width>281</width>
-      <height>26</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>false</bool>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="lineEdit">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>130</y>
-      <width>113</width>
-      <height>26</height>
+      <x>0</x>
+      <y>0</y>
+      <width>401</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
-     <string>database path: </string>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
+     <string>TextLabel</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>130</y>
-      <width>41</width>
+      <x>250</x>
+      <y>140</y>
+      <width>80</width>
       <height>26</height>
      </rect>
     </property>
     <property name="text">
-     <string>save</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>291</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="pixmap">
-     <pixmap>logo25.png</pixmap>
+     <string>PushButton</string>
     </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>23</height>
-    </rect>
+  <action name="actionWiki">
+   <property name="text">
+    <string>Wiki</string>
    </property>
-   <widget class="QMenu" name="menu_File">
-    <property name="title">
-     <string>&amp;Settings</string>
-    </property>
-   </widget>
-   <addaction name="menu_File"/>
-  </widget>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="action_Preferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="action_Wiki">
+   <property name="text">
+    <string>&amp;Wiki</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

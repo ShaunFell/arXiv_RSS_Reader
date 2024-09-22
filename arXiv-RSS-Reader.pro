@@ -1,4 +1,4 @@
-QT       += core gui sql
+QT       += core gui sql widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,19 +9,26 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Source/DB/dbFactory.cpp \
-    Source/DB/dbManager.cpp \
-    main.cpp \
-    mainwindow.cpp
+    DB/dbFactory.cpp \
+    DB/dbManager.cpp \
+    Qt/PreferencesDialog.cpp \
+    Qt/Reader.cpp \
+    Qt/mainwindow.cpp \
+    main.cpp
 
 HEADERS += \
+    DB/dbFactory.h \
+    DB/dbManager.h \
     Preferences.h \
-    Source/DB/dbFactory.h \
-    Source/DB/dbManager.h \
-    mainwindow.h
+    Qt/PreferencesDialog.h \
+    Qt/mainwindow.h \
+    web/Reader.h
 
 FORMS += \
     mainwindow.ui
+
+OTHER_FILES += \
+    logo.ico
 
 RC_ICONS = icon.ico
 
@@ -29,3 +36,6 @@ RC_ICONS = icon.ico
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resources.qrc
