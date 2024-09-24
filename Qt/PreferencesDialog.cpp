@@ -7,7 +7,8 @@
 
 #include <iostream>
 
-#include "PreferencesDialog.h"
+#include "Qt/mainwindow.h"
+#include "Qt/PreferencesDialog.h"
 
 
 PreferencesDialog::PreferencesDialog(MainWindow* mainwin): mainwindow{mainwin}

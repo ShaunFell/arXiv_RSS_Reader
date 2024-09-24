@@ -1,4 +1,4 @@
-QT       += core gui sql widgets
+QT       += core gui sql widgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,9 +12,9 @@ SOURCES += \
     DB/dbFactory.cpp \
     DB/dbManager.cpp \
     Qt/PreferencesDialog.cpp \
-    Qt/Reader.cpp \
     Qt/mainwindow.cpp \
-    main.cpp
+    main.cpp \
+    web/Reader.cpp
 
 HEADERS += \
     DB/dbFactory.h \

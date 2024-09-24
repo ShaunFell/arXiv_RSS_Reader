@@ -7,7 +7,7 @@
 #include <QMenu>
 #include <QAction>
 
-#include "../Preferences.h"
+#include "Preferences.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

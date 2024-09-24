@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-#include "Qt/Source/Qt/../../../Source/Qt/../../mainwindow.h"
+#include "Qt/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "PreferencesDialog.h"
 

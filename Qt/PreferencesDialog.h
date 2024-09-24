@@ -5,7 +5,8 @@
 #include <QDialog>
 #include <QLineEdit>
 #include <QPushButton>
-#include <Qt/Source/Qt/../../../Source/Qt/mainwindow.h>
+
+#include "Qt/mainwindow.h"
 
 
 class PreferencesDialog : public QDialog
