@@ -75,5 +75,8 @@ CMakeLists.txt.user*
 # Build environments
 build/
 
+#temp dir
+.tmp/
+
 # VSCode directories
 .vscode/

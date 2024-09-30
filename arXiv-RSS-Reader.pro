@@ -1,24 +1,27 @@
-QT       += core gui sql widgets network
+DESTDIR = ./build
+
+QT       += core gui widgets network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
+CONFIG -= release
+CONFIG += debug         
+
+BUILDPATH = build
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    DB/dbFactory.cpp \
-    DB/dbManager.cpp \
     Qt/PreferencesDialog.cpp \
     Qt/mainwindow.cpp \
     main.cpp \
     web/Reader.cpp
 
 HEADERS += \
-    DB/dbFactory.h \
-    DB/dbManager.h \
+    DB/container.h \
     Preferences.h \
     Qt/PreferencesDialog.h \
     Qt/mainwindow.h \
@@ -39,3 +42,20 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+
+TARGET = arxiv-rss-reader
+
+release: DESTDIR = $${BUILDPATH}/release
+        debug:   DESTDIR = $${BUILDPATH}/debug
+
+# Release directory
+OBJECTS_DIR = $${DESTDIR}/.obj
+MOC_DIR = $${DESTDIR}/.moc
+RCC_DIR = $${DESTDIR}/.rcc
+UI_DIR = $${DESTDIR}/.ui
+
+CONFIG(release, debug|release) {
+    DEFINES += QT_NO_DEBUG_OUTPUT       
+    message($${DEFINES})
+}
