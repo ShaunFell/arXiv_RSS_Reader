@@ -52,6 +52,7 @@ public:
 public:
     QString m_url;
     QVector<Container> m_containers = {};
+    bool ready { false };
 };
 
 

@@ -80,6 +80,7 @@ void Reader::parseData()
         }
 
         std::cout << "XML parsing complete." << std::endl;
+        ready = true;
     
     } else if (replystatus() == Error ) {}
     
