@@ -24,6 +24,12 @@ jobs:
                sudo apt-get update
                suod apt-get install build-essentials qt5-default
 
+            - name: qmake
+              id: qmake
+              run: |
+               cd arXiv-RSS-Reader
+               qmake -o Makefile arXiv-RSS-Reader.pro
+
             - name: build
               id: build
               continue-on-error: false
