@@ -13,7 +13,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@master
               with:
-                repository: ShaunFell/arXiv-RSS-Reader
+                repository: ShaunFell/arXiv_RSS_Reader
                 token: ${{ secrets.CI_SECRET || github.token }}
                 path: arXiv-RSS-Reader
             
