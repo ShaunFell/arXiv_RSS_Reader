@@ -22,7 +22,7 @@ jobs:
               continue-on-error: true
               run: |
                sudo apt-get update
-               suod apt-get install build-essentials qt5-default
+               sudo apt-get install build-essentials qt5-default
 
             - name: qmake
               id: qmake
