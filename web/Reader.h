@@ -186,8 +186,4 @@ inline QVector<Container> parseXML_Events(QXmlStreamReader& xmlIt)
     return vectorContainers;
 }
 
-
-
-
-
 #endif // READER_H

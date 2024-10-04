@@ -150,9 +150,20 @@ void MainWindow::addToolbars()
     toolbar -> setMovable(false);
     toolbar -> setFloatable(false);
 
+    QLabel* logo = new QLabel();
+    mainLogo = new QPixmap(":/images/logo25.png");
+    *mainLogo = mainLogo -> scaled(200, 200, Qt::KeepAspectRatio);
+    logo -> setPixmap(*mainLogo);
+    toolbar -> addWidget(logo);
+
     //add feed refresh button and attach corresponding action
     QPushButton* refreshFeed_btn = new QPushButton("&refresh", this);
     connect(refreshFeed_btn, &QPushButton::clicked, this, &MainWindow::generateListView);
+
+    //create small space between logo and refresh button
+    QWidget* spacer = new QWidget();
+    spacer -> setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    toolbar -> addWidget(spacer);   
 
     //add button to toolbar and add toolbar to main window
     toolbar -> addWidget(refreshFeed_btn);

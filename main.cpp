@@ -28,10 +28,6 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
-    //Reader web_reader("http://export.arxiv.org/api/query?search_query=ti:%22warp+drive%22+OR+abs:%22warp+drives%22&verb=ListRecords&max_results=200&sortBy=submittedDate");
-    //web_reader.get();
-    
-
     w.show();
     return a.exec();
 }
