@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget *parent)
     currentReader = new Reader(m_prefs.m_feed_url);
 
     qDebug() << "settings file: " << m_prefs.m_SettingsFile;
+
+    generateListView(); //pull feed on startup
 }
 
 MainWindow::~MainWindow()
@@ -227,16 +229,23 @@ void MainWindow::populateViewer(QListWidgetItem* item)
     QListWidgetItem* title = new QListWidgetItem();
     QListWidgetItem* authors = new QListWidgetItem();
     QListWidgetItem* abstract = new QListWidgetItem();
+    QListWidgetItem* dates = new QListWidgetItem();
     QListWidgetItem* href = new QListWidgetItem();
     QListWidgetItem* href_pdf = new QListWidgetItem();
+
+    //convert date strings to QDate
+    QDate date_published = QDate::fromString(currentReader -> m_containers[index].published, Qt::ISODate);
+    QDate date_updated = QDate::fromString(currentReader -> m_containers[index].updated, Qt::ISODate);
 
     //styled QLabels
     QString title_str { "<h1>" + currentReader -> m_containers[index].title + "</h1>" };
     QString authors_str { "<h3>" + currentReader -> m_containers[index].authors.join(", ") + "</h3>" };
     QString abstract_str { "<p>" + currentReader -> m_containers[index].summary + "</p>" };
+    QString dates_str { "<p>published: " + date_published.toString(Qt::TextDate) + "&nbsp;&nbsp;&nbsp;      updated: " + date_updated.toString(Qt::TextDate)  + "</p>" };
     QLabel* title_label = new QLabel(title_str);
     QLabel* authors_label = new QLabel(authors_str);
     QLabel* abstract_label = new QLabel(abstract_str);
+    QLabel* dates_label = new QLabel(dates_str);
 
     //clickable URLs
     QString href_str = "<a href=\"" + currentReader -> m_containers[index].href + "\">" + currentReader -> m_containers[index].href + "</a>";
@@ -255,8 +264,11 @@ void MainWindow::populateViewer(QListWidgetItem* item)
     title_label -> setTextFormat(Qt::RichText);
     title_label -> setWordWrap(true);
     authors_label -> setTextFormat(Qt::RichText);
+    authors_label -> setWordWrap(true);
     abstract_label -> setWordWrap(true);
     abstract_label -> setTextFormat(Qt::RichText);
+    dates_label -> setTextFormat(Qt::RichText);
+    dates_label -> setWordWrap(true);
     href_label -> setWordWrap(true);        
     href_label -> setTextFormat(Qt::RichText);
     href_pdf_label -> setTextFormat(Qt::RichText);
@@ -265,20 +277,23 @@ void MainWindow::populateViewer(QListWidgetItem* item)
     title -> setSizeHint(title_label -> sizeHint());
     authors -> setSizeHint(authors_label -> sizeHint());
     abstract -> setSizeHint(abstract_label -> sizeHint());
+    dates -> setSizeHint(dates_label -> sizeHint());
     href -> setSizeHint(href_label -> sizeHint());
     href_pdf -> setSizeHint(href_pdf_label -> sizeHint());
 
     //insert items to viewer
     ViewLayout -> insertItem(0, title);
     ViewLayout -> insertItem(1, authors);
+    ViewLayout -> insertItem(3, dates);
     ViewLayout -> insertItem(2, abstract);
-    ViewLayout -> insertItem(3, href);
-    ViewLayout -> insertItem(4, href_pdf);
+    ViewLayout -> insertItem(4, href);
+    ViewLayout -> insertItem(5, href_pdf);
 
     //set item widgets
     ViewLayout -> setItemWidget(title, title_label);
     ViewLayout -> setItemWidget(authors, authors_label);
     ViewLayout -> setItemWidget(abstract, abstract_label);
+    ViewLayout -> setItemWidget(dates, dates_label);
     ViewLayout -> setItemWidget(href, href_label);
     ViewLayout -> setItemWidget(href_pdf, href_pdf_label);
 }

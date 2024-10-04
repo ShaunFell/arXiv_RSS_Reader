@@ -141,7 +141,7 @@ inline Container parseXML_SingleEvent(QXmlStreamReader& xmlIt)
     {
         QXmlStreamReader::TokenType token { xmlIt.readNext() };
 
-        if (token == QXmlStreamReader::EndElement && xmlIt.name().toString() == "entry")  
+        if ( token == QXmlStreamReader::EndElement && xmlIt.name().toString() == "entry" )
         {
             break;
         }
@@ -150,7 +150,7 @@ inline Container parseXML_SingleEvent(QXmlStreamReader& xmlIt)
         {
             if (isSimpleElement(xmlIt, (QString)"title")){container.title = xmlIt.readElementText();}
             else if (isSimpleElement(xmlIt, (QString)"id")){container.id = xmlIt.readElementText();} 
-            else if (isSimpleElement(xmlIt, (QString)"updated")){container.updated = xmlIt.readElementText();} 
+            else if (isSimpleElement(xmlIt, (QString)"updated")){container.updated = xmlIt.readElementText();}
             else if (isSimpleElement(xmlIt, (QString)"published")){container.published = xmlIt.readElementText();}
             else if (isSimpleElement(xmlIt, (QString)"summary")){container.summary = xmlIt.readElementText();}
             else if (isURLElement(xmlIt)){container.href = getURLAttribute(xmlIt);}
