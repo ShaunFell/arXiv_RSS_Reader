@@ -70,6 +70,7 @@ void PreferencesDialog::on_dtb_path_savebtn_clicked()
 void PreferencesDialog::on_feed_url_savebtn_clicked()
 {
     mainwindow -> m_prefs.m_feed_url = feed_url_edit -> text();
+    mainwindow -> currentReader -> setUrl(mainwindow -> m_prefs.m_feed_url);
     std::cout << "New feed url: " << mainwindow -> m_prefs.m_feed_url.toStdString() << std::endl;
 
 }

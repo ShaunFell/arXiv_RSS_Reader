@@ -10,6 +10,7 @@
 #include <QVector>
 
 #include "DB/container.h"
+#include <iostream>
 
 class Reader: public QObject
 {
@@ -22,6 +23,8 @@ public:
     }
 
 private:
+
+    QString m_url;
 
     //network
     QNetworkAccessManager *manager;
@@ -47,14 +50,14 @@ private slots:
 
 signals:
     void readSuccess();
-    void readError(QString);
+    void readError(QString, int);
 
 public:
     void get();
+    void setUrl(QString url);
     ReplyStatus replystatus();
 
 public:
-    QString m_url;
     QVector<Container> m_containers = {};
     bool ready { false };
 };
@@ -115,6 +118,9 @@ inline QString parseXML_Author(QXmlStreamReader& xmlIt)
 
         if (token == QXmlStreamReader::StartElement)
         {
+            std::cout << ".." << std::endl;
+            std::cout << xmlIt.name().toString().toStdString() << std::endl;
+            std::cout << xmlIt.text().toString().toStdString() << std::endl;
             if (xmlIt.name().toString() == "name" )
             {
                 author = xmlIt.text().toString();
@@ -150,7 +156,7 @@ inline Container parseXML_SingleEvent(QXmlStreamReader& xmlIt)
             else if (isSimpleElement(xmlIt, (QString)"summary")){container.summary = xmlIt.readElementText();}
             else if (isURLElement(xmlIt)){container.href = getURLAttribute(xmlIt);}
             else if (isURLPDFElement(xmlIt)){container.href_pdf = getURLAttribute(xmlIt);}
-            else if (isSimpleElement(xmlIt, (QString)"name")){container.authors.append(parseXML_Author(xmlIt));}
+            else if (isSimpleElement(xmlIt, (QString)"author")){container.authors.append(parseXML_Author(xmlIt));}
 
         } else 
         {

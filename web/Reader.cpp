@@ -59,6 +59,11 @@ void Reader::get()
     m_xml.setDevice(reply);
 }
 
+void Reader::setUrl(QString a_url)
+{
+    m_url = a_url;
+}
+
 void Reader::parseData()
 {
     if ( replystatus() == Finished )
@@ -82,7 +87,7 @@ void Reader::parseData()
     
     } else if ( replystatus() == Error ) 
     {
-        emit readError(reply -> errorString());
+        emit readError(reply -> errorString(), reply -> error());
     }
     
 }

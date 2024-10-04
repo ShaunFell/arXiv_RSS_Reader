@@ -10,7 +10,9 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QGroupBox>  
-#include <QToolBar>  
+#include <QToolBar>
+#include <QSplitter>
+#include <QDesktopServices>
 
 #include <iostream>
 
@@ -29,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent)
     addActions();
     addMenus();
     addWidgets();
-    addToolbars();   
+    addToolbars();
+    addStatusbar(); 
 
     setMainFrontMatter();
 
@@ -120,8 +123,7 @@ void MainWindow::addMenus()
 
 void MainWindow::addWidgets()
 {
-    groupBox = new QGroupBox("Feed");
-    HLayout = new QHBoxLayout();
+    HLayout = new QSplitter();
     ListLayout = new QListWidget();
     ViewLayout = new QListWidget();
 
@@ -131,31 +133,13 @@ void MainWindow::addWidgets()
     ListLayout -> setSizePolicy(policy);
     ViewLayout -> setSizePolicy(policy);
 
-    
-
-
-
-    /* QListWidgetItem* test1 = new QListWidgetItem();
-    QListWidgetItem* test2 = new QListWidgetItem();
-    test1 -> setText("test1");
-    ListLayout -> insertItem(0, test1);
-    test2 -> setText("test2");
-    ListLayout -> insertItem(1, test2);
-    
-    QListWidgetItem* test3 = new QListWidgetItem();
-    QListWidgetItem* test4 = new QListWidgetItem();
-    test3 -> setText("test3");
-    ViewLayout -> insertItem(0, test3);
-    test4 -> setText("test4");
-    ViewLayout -> insertItem(1, test4); */  
-
-
     HLayout -> addWidget(ListLayout);
-    HLayout -> addWidget(ViewLayout);       
+    HLayout -> addWidget(ViewLayout);
 
-    groupBox -> setLayout(HLayout); 
+    //set click events
+    connect(ListLayout, &QListWidget::itemClicked, this, &MainWindow::populateViewer    );
 
-    this -> setCentralWidget(groupBox); 
+    this -> setCentralWidget(HLayout);
 }
 
 void MainWindow::addToolbars()
@@ -171,34 +155,102 @@ void MainWindow::addToolbars()
 
     //add button to toolbar and add toolbar to main window
     toolbar -> addWidget(refreshFeed_btn);
-    this -> addToolBar(toolbar);    
+    this -> addToolBar(toolbar);
 }
 
-void MainWindow::readStream()       
+void MainWindow::addStatusbar()
+{
+
+    statusBar = new QStatusBar();
+    this -> setStatusBar(statusBar);
+}
+
+void MainWindow::readStream()
 {
     currentReader -> get();
 }   
 
 void MainWindow::generateListView()
 {
+    //show loading status
+    statusBar -> showMessage("Loading...");
+
+
     readStream();
-    connect(currentReader, &Reader::readSuccess, this, &MainWindow::populateViewer);
+    connect(currentReader, &Reader::readSuccess, this, &MainWindow::populateList);
     connect(currentReader, &Reader::readError, this, &MainWindow::printNetworkError);
 }
 
-void MainWindow::populateViewer()
+void MainWindow::populateList()
 {
-   /*  //iterate through containers and populate list view
-    for (auto& entry: currentReader -> m_containers )
+    //show success status
+    statusBar -> showMessage("Done", 2000);
+
+    //iterate through containers and populate list view
+    for ( int inx{0}; inx < currentReader -> m_containers.size(); ++inx )
     {
-        QLabel* currentLabel = new QLabel(entry.title);
+        auto entry = currentReader -> m_containers[inx];
+        QListWidgetItem* newItem = new QListWidgetItem();
+        newItem -> setText(entry.title);
+        ListLayout -> insertItem(inx, newItem);
 
-
-    } */
+    }
 }
 
-void MainWindow::printNetworkError(QString error)
+void MainWindow::populateViewer(QListWidgetItem* item)
 {
-    std::cout << "Network error: " << error.toStdString() << std::endl;      
+    //first clear the viewer
+    ViewLayout -> clear();
 
+    //get index of selected item
+    int index = ListLayout -> row(item);
+
+    //populate viewer
+    QListWidgetItem* title = new QListWidgetItem();
+    QListWidgetItem* authors = new QListWidgetItem();
+    QListWidgetItem* abstract = new QListWidgetItem();
+    QListWidgetItem* href = new QListWidgetItem();
+    QListWidgetItem* href_pdf = new QListWidgetItem();
+
+    title -> setText(currentReader -> m_containers[index].title);
+    authors -> setText(currentReader -> m_containers[index].authors.join(", "));
+    abstract -> setText(currentReader -> m_containers[index].summary);
+
+    std::cout << "author: " << currentReader -> m_containers[index].authors[0].toStdString() << std::endl;
+
+    //clickable URLs
+    QString href_str = "<a href=\"" + currentReader -> m_containers[index].href + "\">" + currentReader -> m_containers[index].href + "</a>";
+    QString href_pdf_str = "<a href=\"" + currentReader -> m_containers[index].href_pdf + "\">" + currentReader -> m_containers[index].href_pdf + "</a>";
+    
+    QLabel* href_label = new QLabel(href_str);
+    QLabel* href_pdf_label = new QLabel(href_pdf_str);
+
+    //set interaction flags 
+    href_label -> setTextInteractionFlags(Qt::TextBrowserInteraction);
+    href_pdf_label -> setTextInteractionFlags(Qt::TextBrowserInteraction);
+    href_label -> setOpenExternalLinks(true);
+    href_pdf_label -> setOpenExternalLinks(true);
+
+    //item formatting. Ensures we can select the text with cursor
+    href_label -> setTextFormat(Qt::RichText);
+    href_pdf_label -> setTextFormat(Qt::RichText);
+
+    ViewLayout -> insertItem(0, title);
+    ViewLayout -> insertItem(1, authors);
+    ViewLayout -> insertItem(2, abstract);
+    ViewLayout -> insertItem(3, href);
+    ViewLayout -> insertItem(4, href_pdf);
+
+    ViewLayout -> setItemWidget(href, href_label);
+    ViewLayout -> setItemWidget(href_pdf, href_pdf_label);
+
+}
+
+void MainWindow::printNetworkError(QString error, int error_code)
+{
+    QString message { "NetworkError: " };
+    message += (QString)error_code + " ";
+    message += error;
+    //show error status
+    statusBar -> showMessage(message);
 }

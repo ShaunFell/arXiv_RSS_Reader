@@ -11,6 +11,7 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QToolBar>
+#include <QSplitter>
 
 #include "Preferences.h"
 #include "web/Reader.h"
@@ -43,6 +44,7 @@ private:
     void addMenus();
     void addWidgets();
     void addToolbars();
+    void addStatusbar();
 
 
     void readStream();
@@ -54,18 +56,20 @@ protected:
 
 private:
 
-    QMenu *settingsMenu;
-    QMenu *helpMenu;
+    QMenu* settingsMenu;
+    QMenu* helpMenu;
 
-    QAction *preferencesAct;
-    QAction *aboutAct;
+    QAction* preferencesAct;
+    QAction* aboutAct;
 
     //Toolbar
-    QToolBar *toolbar;
+    QToolBar* toolbar;
+
+    //Status bar
+    QStatusBar* statusBar;
 
     //Central widget
-    QGroupBox* groupBox;
-    QHBoxLayout* HLayout;
+    QSplitter* HLayout;
     QListWidget* ListLayout;
     QListWidget* ViewLayout;
 
@@ -77,8 +81,9 @@ private:
 private slots:
     void about();
     void openPreferences();
-    void populateViewer();
-    void printNetworkError(QString);
+    void populateList();
+    void populateViewer(QListWidgetItem*);
+    void printNetworkError(QString, int);
     void generateListView();
 
 };

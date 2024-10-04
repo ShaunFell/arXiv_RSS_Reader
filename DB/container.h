@@ -12,7 +12,7 @@ struct Container
     QString summary;
     QString href;
     QString href_pdf;
-    QVector<QString> authors = {};
+    QStringList authors = {};
 };
 
 enum ReplyStatus
