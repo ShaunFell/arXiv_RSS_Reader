@@ -17,16 +17,16 @@ jobs:
                 token: ${{ secrets.CI_SECRET || github.token }}
                 path: arXiv-RSS-Reader
             
-            -name: update
-             id: update_database
-             continue-on-error: true
-             run: |
+            - name: update
+              id: update_database
+              continue-on-error: true
+              run: |
                sudo apt-get update
                suod apt-get install build-essentials qt5-default
 
-            -name: build
-             id: build
-             continue-on-error: false
-             run: |
+            - name: build
+              id: build
+              continue-on-error: false
+              run: |
                cd arXiv-RSS-Reader
                make -j$(nproc)
