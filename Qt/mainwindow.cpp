@@ -17,6 +17,7 @@
 #include <iostream>
 
 #include "Qt/mainwindow.h"
+#include "DB/container.h"
 #include "ui_mainwindow.h"
 #include "PreferencesDialog.h"
 
@@ -42,13 +43,11 @@ MainWindow::MainWindow(QWidget *parent)
     currentReader = new Reader(m_prefs.m_feed_url);
 
     qDebug() << "settings file: " << m_prefs.m_SettingsFile;
-
 }
 
 MainWindow::~MainWindow()
 {
     saveSettings();
-
     delete ui;
 }
 
@@ -137,7 +136,7 @@ void MainWindow::addWidgets()
     HLayout -> addWidget(ViewLayout);
 
     //set click events
-    connect(ListLayout, &QListWidget::itemClicked, this, &MainWindow::populateViewer    );
+    connect(ListLayout, &QListWidget::itemClicked, this, &MainWindow::populateViewer);
 
     this -> setCentralWidget(HLayout);
 }
@@ -183,7 +182,6 @@ void MainWindow::generateListView()
     //show loading status
     statusBar -> showMessage("Loading...");
 
-
     readStream();
     connect(currentReader, &Reader::readSuccess, this, &MainWindow::populateList);
     connect(currentReader, &Reader::readError, this, &MainWindow::printNetworkError);
@@ -191,6 +189,11 @@ void MainWindow::generateListView()
 
 void MainWindow::populateList()
 {
+
+    //clear list
+    ListLayout -> clear();
+
+    //set success message
     //show success status
     statusBar -> showMessage("Done", 2000);
 
@@ -207,6 +210,13 @@ void MainWindow::populateList()
 
 void MainWindow::populateViewer(QListWidgetItem* item)
 {
+    //perform test routines
+    if (currentReader -> m_containers.size() != ListLayout -> count()) 
+    {  //if number of containers doesn't match number of list items, something horrible has happene
+        qFatal("Number of containers doesn't match number of list items");
+        statusBar -> showMessage("Critical  Error", 4000);
+        return;
+    }
     //first clear the viewer
     ViewLayout -> clear();
 
@@ -276,7 +286,7 @@ void MainWindow::populateViewer(QListWidgetItem* item)
 void MainWindow::printNetworkError(QString error, int error_code)
 {
     QString message { "NetworkError: " };
-    message += (QString)error_code + " ";
+    message += QString::number(error_code) + " ";
     message += error;
     //show error status
     statusBar -> showMessage(message);

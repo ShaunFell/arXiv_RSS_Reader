@@ -81,6 +81,9 @@ void Reader::parseData()
         //restart retry counter
         m_current_retries = 0;
 
+        //clear containers
+        m_containers.clear();
+
         //parse XML
         std::cout << "Received XML data. Parsing..." << std::endl;
         //run through XML data and parse <entry>...</entry> items into container objects

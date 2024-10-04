@@ -15,6 +15,7 @@
 
 #include "Preferences.h"
 #include "web/Reader.h"
+#include "DB/container.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -82,6 +83,7 @@ private:
 
     //timer for feed refresh
     QTimer* feedRefreshTimer;
+
 
 private slots:
     void about();

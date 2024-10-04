@@ -28,7 +28,7 @@ void PreferencesDialog::addLabels()
 
     //Feed URL LineEdit
     feed_url_edit = new QLineEdit(this);
-    feed_url_edit -> setPlaceholderText(mainwindow -> m_prefs.m_feed_url);
+    feed_url_edit -> setText(mainwindow -> m_prefs.m_feed_url);
 
     //Feed URL save button
     feed_url_savebtn = new QPushButton("&Save", this);
@@ -40,7 +40,7 @@ void PreferencesDialog::addLabels()
 
     //update frequency LineEdit
     update_freq_edit = new QLineEdit(this);
-    update_freq_edit -> setPlaceholderText(QString::number(mainwindow -> m_prefs.m_update_freq));
+    update_freq_edit -> setText(QString::number(mainwindow -> m_prefs.m_update_freq / MINUTE_IN_MILLISECONDS));  
 
     //update frequency save button
     update_freq_savebtn = new QPushButton("&Save", this);
