@@ -56,6 +56,6 @@ RCC_DIR = $${DESTDIR}/.rcc
 UI_DIR = $${DESTDIR}/.ui
 
 CONFIG(release, debug|release) {
-    DEFINES += QT_NO_DEBUG_OUTPUT       
+    DEFINES += QT_NO_DEBUG_OUTPUT
     message($${DEFINES})
 }

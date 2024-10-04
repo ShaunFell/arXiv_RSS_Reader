@@ -45,6 +45,7 @@ private:
     void addWidgets();
     void addToolbars();
     void addStatusbar();
+    void addTimer(int);
 
 
     void readStream();
@@ -73,10 +74,14 @@ private:
     QListWidget* ListLayout;
     QListWidget* ViewLayout;
 
-
+    //main logo
     QPixmap* mainLogo;
 
+    //Feed reader
     Reader* currentReader;
+
+    //timer for feed refresh
+    QTimer* feedRefreshTimer;
 
 private slots:
     void about();

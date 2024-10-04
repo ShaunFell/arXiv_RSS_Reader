@@ -10,28 +10,18 @@
 #include "Qt/mainwindow.h"
 #include "Qt/PreferencesDialog.h"
 
+#define MINUTE_IN_MILLISECONDS 60000
 
 PreferencesDialog::PreferencesDialog(MainWindow* mainwin): mainwindow{mainwin}
 {
-    this -> resize(800,600);
+    this -> resize(800,150);
     addLabels();
 }
 
 
 void PreferencesDialog::addLabels()
 {
-    //Database path label
-    QLabel *dtb_path_label = new QLabel(this);
-    dtb_path_label -> setText("Database Path: ");
-
-    //Database path LineEdit
-    dtb_path_edit = new QLineEdit(this);
-    dtb_path_edit -> setPlaceholderText(mainwindow -> m_prefs.m_database_abspath);
-
-    //Database path save button
-    dtb_path_savebtn = new QPushButton("&Save", this);
-    connect(dtb_path_savebtn, SIGNAL(clicked()), this, SLOT(on_dtb_path_savebtn_clicked()));
-
+    
     //Feed URL label
     QLabel *feed_url_label = new QLabel(this);
     feed_url_label -> setText("Feed URL: ");
@@ -44,33 +34,51 @@ void PreferencesDialog::addLabels()
     feed_url_savebtn = new QPushButton("&Save", this);
     connect(feed_url_savebtn, SIGNAL(clicked()), this, SLOT(on_feed_url_savebtn_clicked()));
 
+    //update frequency label
+    QLabel* update_freq_label = new QLabel(this);
+    update_freq_label -> setText("Update Frequency (minutes): ");
+
+    //update frequency LineEdit
+    update_freq_edit = new QLineEdit(this);
+    update_freq_edit -> setPlaceholderText(QString::number(mainwindow -> m_prefs.m_update_freq));
+
+    //update frequency save button
+    update_freq_savebtn = new QPushButton("&Save", this);
+    connect(update_freq_savebtn, SIGNAL(clicked()), this, SLOT(on_update_freq_savebtn_clicked()));
 
 
-    //Box of widgets
+    //list of widgets
     QGridLayout *grid_layout = new QGridLayout(this);
-    grid_layout -> addWidget(dtb_path_label, 0, 0);
-    grid_layout -> addWidget(dtb_path_edit, 0, 1);
-    grid_layout -> addWidget(dtb_path_savebtn, 0, 2);
 
-    grid_layout -> addWidget(feed_url_label, 1, 0);
-    grid_layout -> addWidget(feed_url_edit, 1, 1);
-    grid_layout -> addWidget(feed_url_savebtn, 1, 2);
+    grid_layout -> addWidget(feed_url_label, 0, 0);
+    grid_layout -> addWidget(feed_url_edit, 0, 1);
+    grid_layout -> addWidget(feed_url_savebtn, 0, 2);
+
+    grid_layout -> addWidget(update_freq_label, 1, 0);
+    grid_layout -> addWidget(update_freq_edit, 1, 1);
+    grid_layout -> addWidget(update_freq_savebtn, 1, 2);
+
 
 }
 
-
-
-void PreferencesDialog::on_dtb_path_savebtn_clicked()
-{
-    mainwindow -> m_prefs.m_database_abspath = dtb_path_edit -> text();
-    std::cout << "New Database Path: " << mainwindow -> m_prefs.m_database_abspath.toStdString() << std::endl;
-
-}
 
 void PreferencesDialog::on_feed_url_savebtn_clicked()
 {
     mainwindow -> m_prefs.m_feed_url = feed_url_edit -> text();
     mainwindow -> currentReader -> setUrl(mainwindow -> m_prefs.m_feed_url);
     std::cout << "New feed url: " << mainwindow -> m_prefs.m_feed_url.toStdString() << std::endl;
+
+}
+
+
+void PreferencesDialog::on_update_freq_savebtn_clicked()
+{
+    mainwindow -> m_prefs.m_update_freq = update_freq_edit -> text().toFloat() * MINUTE_IN_MILLISECONDS;
+
+    //update timer (drop any decimals by forcing type conversion to int)
+    int new_interval = (int)mainwindow -> m_prefs.m_update_freq;
+    mainwindow -> feedRefreshTimer -> start(new_interval);
+
+    std::cout << "New update frequency: " << new_interval << std::endl;
 
 }

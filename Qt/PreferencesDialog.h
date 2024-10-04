@@ -27,17 +27,15 @@ private:
 
 private:
 
-    QAction *database_save_act;
-    QAction *feed_url_act;
-
-    QLineEdit *dtb_path_edit;
-    QPushButton *dtb_path_savebtn;
     QLineEdit *feed_url_edit;
     QPushButton *feed_url_savebtn;
 
+    QLineEdit* update_freq_edit;
+    QPushButton* update_freq_savebtn;
+
 private slots:
-    void on_dtb_path_savebtn_clicked();
     void on_feed_url_savebtn_clicked();
+    void on_update_freq_savebtn_clicked();
 
 };
 

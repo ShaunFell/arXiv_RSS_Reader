@@ -38,7 +38,17 @@ void Reader::managerfinished(QNetworkReply *reply)
 
 void Reader::error(QNetworkReply::NetworkError)
 {
-    qWarning("Failed to retrieve XML data");
+    qWarning("Failed to retrieve XML data. Retries left: %d", m_max_retries - m_current_retries);
+
+    if (m_current_retries < m_max_retries)
+    {
+        m_current_retries++;
+        std::cout << "Retrying..." << std::endl;
+        get();
+    } else
+    {
+        emit readError(reply -> errorString(), reply -> error());
+    }
 
 }
 
@@ -68,6 +78,10 @@ void Reader::parseData()
 {
     if ( replystatus() == Finished )
     {
+        //restart retry counter
+        m_current_retries = 0;
+
+        //parse XML
         std::cout << "Received XML data. Parsing..." << std::endl;
         //run through XML data and parse <entry>...</entry> items into container objects
         for (; !m_xml.atEnd(); m_xml.readNext())

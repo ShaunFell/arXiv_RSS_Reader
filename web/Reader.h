@@ -10,7 +10,6 @@
 #include <QVector>
 
 #include "DB/container.h"
-#include <iostream>
 
 class Reader: public QObject
 {
@@ -25,6 +24,9 @@ public:
 private:
 
     QString m_url;
+
+    int m_max_retries { 5 };
+    int m_current_retries { 0 };
 
     //network
     QNetworkAccessManager *manager;
@@ -113,17 +115,14 @@ inline QString parseXML_Author(QXmlStreamReader& xmlIt)
 
         if (token == QXmlStreamReader::EndElement && xmlIt.name().toString() == "author" )
         {
-            break;  
+            break;
         }
 
         if (token == QXmlStreamReader::StartElement)
         {
-            std::cout << ".." << std::endl;
-            std::cout << xmlIt.name().toString().toStdString() << std::endl;
-            std::cout << xmlIt.text().toString().toStdString() << std::endl;
             if (xmlIt.name().toString() == "name" )
             {
-                author = xmlIt.text().toString();
+                author = xmlIt.readElementText();
             } else 
             {
                 continue;

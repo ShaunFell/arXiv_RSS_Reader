@@ -20,6 +20,8 @@
 #include "ui_mainwindow.h"
 #include "PreferencesDialog.h"
 
+#define MINUTE_IN_MILLISECONDS 60000
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,12 +35,13 @@ MainWindow::MainWindow(QWidget *parent)
     addWidgets();
     addToolbars();
     addStatusbar(); 
+    addTimer(m_prefs.m_update_freq); //also automatically executes feed refresh
 
     setMainFrontMatter();
 
     currentReader = new Reader(m_prefs.m_feed_url);
 
-    std::cout << "settings file: " << m_prefs.m_SettingsFile.toStdString() << std::endl;
+    qDebug() << "settings file: " << m_prefs.m_SettingsFile;
 
 }
 
@@ -58,17 +61,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::saveSettings(){
     QSettings settings(m_prefs.m_SettingsFile, QSettings::IniFormat);
 
-    std::cout << "databasepath: " << m_prefs.m_database_abspath.toStdString() << std::endl;
-    std::cout << "feed url: " << m_prefs.m_feed_url.toStdString() << std::endl;
-
-    settings.setValue("database_abspath", m_prefs.m_database_abspath);
+    settings.setValue("update_freq", m_prefs.m_update_freq);
     settings.setValue("feed_url", m_prefs.m_feed_url);
 }
 
 void MainWindow::loadSettings()
 {
     QSettings settings(m_prefs.m_SettingsFile, QSettings::IniFormat);
-    m_prefs.m_database_abspath = settings.value("database_abspath", QDir::homePath() + (QString)"/.local/lib/sqlite").toString();
+    m_prefs.m_update_freq = settings.value("update_freq", 60 * MINUTE_IN_MILLISECONDS).toInt();
     m_prefs.m_feed_url = settings.value("feed_url", "").toString();
 }
 
@@ -165,6 +165,14 @@ void MainWindow::addStatusbar()
     this -> setStatusBar(statusBar);
 }
 
+void MainWindow::addTimer(int interval)
+{
+    std::cout << "Timer added with interval: " << interval <<std::endl;
+    feedRefreshTimer = new QTimer(this);
+    connect(feedRefreshTimer, SIGNAL(timeout()), this, SLOT(generateListView()));
+    feedRefreshTimer -> start(interval);
+}
+
 void MainWindow::readStream()
 {
     currentReader -> get();
@@ -212,11 +220,13 @@ void MainWindow::populateViewer(QListWidgetItem* item)
     QListWidgetItem* href = new QListWidgetItem();
     QListWidgetItem* href_pdf = new QListWidgetItem();
 
-    title -> setText(currentReader -> m_containers[index].title);
-    authors -> setText(currentReader -> m_containers[index].authors.join(", "));
-    abstract -> setText(currentReader -> m_containers[index].summary);
-
-    std::cout << "author: " << currentReader -> m_containers[index].authors[0].toStdString() << std::endl;
+    //styled QLabels
+    QString title_str { "<h1>" + currentReader -> m_containers[index].title + "</h1>" };
+    QString authors_str { "<h3>" + currentReader -> m_containers[index].authors.join(", ") + "</h3>" };
+    QString abstract_str { "<p>" + currentReader -> m_containers[index].summary + "</p>" };
+    QLabel* title_label = new QLabel(title_str);
+    QLabel* authors_label = new QLabel(authors_str);
+    QLabel* abstract_label = new QLabel(abstract_str);
 
     //clickable URLs
     QString href_str = "<a href=\"" + currentReader -> m_containers[index].href + "\">" + currentReader -> m_containers[index].href + "</a>";
@@ -232,18 +242,35 @@ void MainWindow::populateViewer(QListWidgetItem* item)
     href_pdf_label -> setOpenExternalLinks(true);
 
     //item formatting. Ensures we can select the text with cursor
+    title_label -> setTextFormat(Qt::RichText);
+    title_label -> setWordWrap(true);
+    authors_label -> setTextFormat(Qt::RichText);
+    abstract_label -> setWordWrap(true);
+    abstract_label -> setTextFormat(Qt::RichText);
+    href_label -> setWordWrap(true);        
     href_label -> setTextFormat(Qt::RichText);
     href_pdf_label -> setTextFormat(Qt::RichText);
 
+    //resize items according to widget hints
+    title -> setSizeHint(title_label -> sizeHint());
+    authors -> setSizeHint(authors_label -> sizeHint());
+    abstract -> setSizeHint(abstract_label -> sizeHint());
+    href -> setSizeHint(href_label -> sizeHint());
+    href_pdf -> setSizeHint(href_pdf_label -> sizeHint());
+
+    //insert items to viewer
     ViewLayout -> insertItem(0, title);
     ViewLayout -> insertItem(1, authors);
     ViewLayout -> insertItem(2, abstract);
     ViewLayout -> insertItem(3, href);
     ViewLayout -> insertItem(4, href_pdf);
 
+    //set item widgets
+    ViewLayout -> setItemWidget(title, title_label);
+    ViewLayout -> setItemWidget(authors, authors_label);
+    ViewLayout -> setItemWidget(abstract, abstract_label);
     ViewLayout -> setItemWidget(href, href_label);
     ViewLayout -> setItemWidget(href_pdf, href_pdf_label);
-
 }
 
 void MainWindow::printNetworkError(QString error, int error_code)
