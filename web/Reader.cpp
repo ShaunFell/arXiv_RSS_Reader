@@ -75,14 +75,15 @@ void Reader::parseData()
             {
                 m_containers.append(parseXML_Events(m_xml));
             }
-
-            qDebug() << "Number of items found: " << m_containers.size();
         }
 
         std::cout << "XML parsing complete." << std::endl;
-        ready = true;
+        emit readSuccess(); //emit the success signal
     
-    } else if (replystatus() == Error ) {}
+    } else if ( replystatus() == Error ) 
+    {
+        emit readError(reply -> errorString());
+    }
     
 }
 

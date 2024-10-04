@@ -45,6 +45,10 @@ private:
 private slots:
     void managerfinished(QNetworkReply *reply);
 
+signals:
+    void readSuccess();
+    void readError(QString);
+
 public:
     void get();
     ReplyStatus replystatus();

@@ -7,7 +7,13 @@
 #include <QMenu>
 #include <QAction>
 
+#include <QGroupBox> 
+#include <QHBoxLayout>
+#include <QListWidget>
+#include <QToolBar>
+
 #include "Preferences.h"
+#include "web/Reader.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,9 +41,11 @@ private:
     void setMainFrontMatter();
     void addActions();
     void addMenus();
+    void addWidgets();
+    void addToolbars();
 
-    void about();
-    void openPreferences();
+
+    void readStream();
 
 protected:
 
@@ -51,6 +59,27 @@ private:
 
     QAction *preferencesAct;
     QAction *aboutAct;
+
+    //Toolbar
+    QToolBar *toolbar;
+
+    //Central widget
+    QGroupBox* groupBox;
+    QHBoxLayout* HLayout;
+    QListWidget* ListLayout;
+    QListWidget* ViewLayout;
+
+
+    QPixmap* mainLogo;
+
+    Reader* currentReader;
+
+private slots:
+    void about();
+    void openPreferences();
+    void populateViewer();
+    void printNetworkError(QString);
+    void generateListView();
 
 };
 #endif // MAINWINDOW_H
