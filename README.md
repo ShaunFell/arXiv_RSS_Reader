@@ -52,3 +52,7 @@ When you click on an article in the left pane, the following information will be
 - Publication date and last update date
 - link to the arXiv article
 - link to the articles pdf
+
+
+## Uninstallation
+To remove the program and associated files, simply execute `make uninstall` where you previously ran `make install` (probably the repo's base directory).
