@@ -9,12 +9,15 @@
 #include <QAction>
 #include <QMenuBar>
 #include <QMenu>
-#include <QGroupBox>  
+#include <QGroupBox>
+#include <QComboBox>
 #include <QToolBar>
 #include <QSplitter>
 #include <QDesktopServices>
 
 #include <iostream>
+#include <algorithm>
+#include <cstring>
 
 #include "Qt/mainwindow.h"
 #include "DB/container.h"
@@ -41,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent)
     setMainFrontMatter();
 
     currentReader = new Reader(m_prefs.m_feed_url);
+    sortList(dateUpdated); //pre-sort
+
 
     qDebug() << "settings file: " << m_prefs.m_SettingsFile;
 
@@ -138,6 +143,7 @@ void MainWindow::addWidgets()
     HLayout -> addWidget(ViewLayout);
 
     //set click events
+    connect(ListLayout, &QListWidget::itemActivated, this, &MainWindow::populateViewer);
     connect(ListLayout, &QListWidget::itemClicked, this, &MainWindow::populateViewer);
 
     this -> setCentralWidget(HLayout);
@@ -156,6 +162,14 @@ void MainWindow::addToolbars()
     logo -> setPixmap(*mainLogo);
     toolbar -> addWidget(logo);
 
+    //add sort list
+    comboBox = new QComboBox();
+    comboBox -> addItem("Date Updated");
+    comboBox -> addItem("Date Published");
+    comboBox -> addItem("Title");
+    comboBox -> addItem("Title (reversed)");
+    connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(populateList())); //on index change, rebuild list with new sort
+
     //add feed refresh button and attach corresponding action
     QPushButton* refreshFeed_btn = new QPushButton("&refresh", this);
     connect(refreshFeed_btn, &QPushButton::clicked, this, &MainWindow::generateListView);
@@ -166,6 +180,7 @@ void MainWindow::addToolbars()
     toolbar -> addWidget(spacer);   
 
     //add button to toolbar and add toolbar to main window
+    toolbar -> addWidget(comboBox);
     toolbar -> addWidget(refreshFeed_btn);
     this -> addToolBar(toolbar);
 }
@@ -206,6 +221,9 @@ void MainWindow::populateList()
     //clear list
     ListLayout -> clear();
 
+    //sort
+    sortList(comboBox -> currentIndex());
+
     //set success message
     //show success status
     statusBar -> showMessage("Done", 2000);
@@ -217,7 +235,50 @@ void MainWindow::populateList()
         QListWidgetItem* newItem = new QListWidgetItem();
         newItem -> setText(entry.title);
         ListLayout -> insertItem(inx, newItem);
+    }
+}
 
+void MainWindow::sortList(int sortType)
+{
+    //sort the container in-place
+
+    switch (sortType)
+    {
+        case dateUpdated:
+            std::sort(currentReader -> m_containers.begin(), 
+                    currentReader -> m_containers.end(), 
+                    [](const auto& a, const auto& b) 
+                        { 
+                            return QDate::fromString(a.updated, Qt::ISODate) > QDate::fromString(b.updated, Qt::ISODate);
+                        }
+                );
+            break;
+        case datePublished:
+            std::sort(currentReader -> m_containers.begin(), 
+                    currentReader -> m_containers.end(), 
+                    [](const auto& a, const auto& b) 
+                        { 
+                            return QDate::fromString(a.published, Qt::ISODate) > QDate::fromString(b.published, Qt::ISODate);
+                        }
+                );
+            break;
+        case title:
+            std::sort(currentReader -> m_containers.begin(), 
+                    currentReader -> m_containers.end(), 
+                    [](const auto& a, const auto& b) 
+                        { 
+                            return QString::compare(a.title, b.title, Qt::CaseInsensitive) < 0;
+                        }
+                );
+            break;
+        case titlereversed:
+            std::sort(currentReader -> m_containers.begin(), 
+                    currentReader -> m_containers.end(), 
+                    [](const auto& a, const auto& b) 
+                        { 
+                            return QString::compare(a.title, b.title, Qt::CaseInsensitive) > 0;
+                        }
+                );
     }
 }
 

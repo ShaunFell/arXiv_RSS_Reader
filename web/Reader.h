@@ -174,14 +174,19 @@ inline QVector<Container> parseXML_Events(QXmlStreamReader& xmlIt)
     {
         QXmlStreamReader::TokenType token { xmlIt.readNext() };
 
-        if ( token == QXmlStreamReader::EndElement && xmlIt.name().toString() == "entry") 
+        if ( token == QXmlStreamReader::EndElement && (xmlIt.name().toString() == "entry" || xmlIt.name().toString() == "feed") ) 
         {
             qDebug() << "Reached end. ";
             break;
         }
 
-        vectorContainers.append(parseXML_SingleEvent(xmlIt));
-    }
+        Container container { parseXML_SingleEvent(xmlIt) };
+
+        // If container title is non-empty append to list
+        if (container.title != "" )
+        {
+            vectorContainers.append(container);}
+        }
 
     return vectorContainers;
 }

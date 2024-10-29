@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=/home/shaunfell/.bin/arxiv_rss_reader
+Icon=/home/shaunfell/.local/share/icons/arxiv_rss_reader.ico
+Name=Arxiv RSS Reader

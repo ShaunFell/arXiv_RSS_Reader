@@ -11,6 +11,7 @@
 #include <QHBoxLayout>
 #include <QListWidget>
 #include <QToolBar>
+#include <QComboBox>
 #include <QSplitter>
 
 #include "Preferences.h"
@@ -50,10 +51,20 @@ private:
 
 
     void readStream();
+    void sortList(int sortType = datePublished);
+
 
 protected:
 
     ActivePreferences m_prefs;
+
+    enum //sort types
+    {
+        dateUpdated,
+        datePublished,
+        title,
+        titlereversed
+    };
 
 
 private:
@@ -66,6 +77,10 @@ private:
 
     //Toolbar
     QToolBar* toolbar;
+
+    //combo box for sort types
+    QComboBox* comboBox;
+
 
     //Status bar
     QStatusBar* statusBar;
@@ -83,6 +98,7 @@ private:
 
     //timer for feed refresh
     QTimer* feedRefreshTimer;
+
 
 
 private slots:

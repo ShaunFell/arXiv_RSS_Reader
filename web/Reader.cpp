@@ -93,6 +93,8 @@ void Reader::parseData()
 
             if ( token == QXmlStreamReader::StartDocument ) continue;
 
+            if ( token == QXmlStreamReader::EndElement && m_xml.name() == "feed" ) break;
+
             if ( token == QXmlStreamReader::StartElement && isStartElementOfEntry(m_xml)) //if this is the beginning of a <entry>...</entry> block
             {
                 m_containers.append(parseXML_Events(m_xml));

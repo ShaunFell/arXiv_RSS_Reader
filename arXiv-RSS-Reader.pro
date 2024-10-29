@@ -5,8 +5,8 @@ QT += core gui widgets network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
-CONFIG -= release
-CONFIG += debug         
+CONFIG -= debug
+CONFIG += release
 
 BUILDPATH = build
 
@@ -36,15 +36,38 @@ OTHER_FILES += \
 RC_ICONS = icon.ico
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
+HOME = $$system(echo $HOME)
+target.path = $${HOME}/.bin
+icons.path = $${HOME}/.local/share/icons
+icons.files = ./images/arxiv_rss_reader.ico
+
+desktop.path = $${HOME}/.local/share/applications
+desktop.files = $$OUT_PWD/arxiv-rss-reader.desktop
+
+# automatically generate .desktop
+gen_desktop.target = arxiv-rss-reader.desktop
+gen_desktop.commands = echo "[Desktop Entry]" >> arxiv-rss-reader.desktop && \
+                   echo "Version=1.0" >> arxiv-rss-reader.desktop && \
+                   echo "Type=Application" >> arxiv-rss-reader.desktop && \
+                   echo "Terminal=false" >> arxiv-rss-reader.desktop && \
+                   echo "Exec="$${HOME}"/.bin/arxiv_rss_reader" >> arxiv-rss-reader.desktop && \
+                   echo "Icon="$${HOME}"/.local/share/icons/arxiv_rss_reader.ico" >> arxiv-rss-reader.desktop && \
+                   echo "Name=Arxiv RSS Reader" >> arxiv-rss-reader.desktop
+gen_desktop.CONFIG += no_link
+
+#install targets
+INSTALLS += target icons desktop
+
+#add .desktop build to app build
+QMAKE_EXTRA_TARGETS += gen_desktop
+PRE_TARGETDEPS += arxiv-rss-reader.desktop
+
 
 RESOURCES += \
     resources.qrc
 
 
-TARGET = arxiv-rss-reader
+TARGET = arxiv_rss_reader
 
 release: DESTDIR = $${BUILDPATH}/release
         debug:   DESTDIR = $${BUILDPATH}/debug
@@ -57,5 +80,5 @@ UI_DIR = $${DESTDIR}/.ui
 
 CONFIG(release, debug|release) {
     DEFINES += QT_NO_DEBUG_OUTPUT
-    message($${DEFINES})
+    message($$system(echo $HOME))
 }
